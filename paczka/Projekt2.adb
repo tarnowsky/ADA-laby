@@ -7,8 +7,10 @@ procedure Symulacja is
    Liczba_Wyrobow: constant Integer := 5;
    Liczba_Zestawow: constant Integer := 3;
    Liczba_Konsumentow: constant Integer := 2;
+   -- ZMIANA, CZAS
    subtype Zakres_Czasu_Produkcji is Integer range 3 .. 6;
    subtype Zakres_Czasu_Konsumpcji is Integer range 4 .. 8;
+   -- END
    subtype Typ_Wyrobow is Integer range 1 .. Liczba_Wyrobow;
    subtype Typ_Zestawow is Integer range 1 .. Liczba_Zestawow;
    subtype Typ_Konsumenta is Integer range 1 .. Liczba_Konsumentow;
