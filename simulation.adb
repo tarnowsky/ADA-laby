@@ -123,7 +123,8 @@ procedure Simulation is
       Storage_Capacity: constant Integer := 30;
       type Storage_type is array (Product_Type) of Integer;
       Storage: Storage_type := (0, 0, 0, 0, 0);
-      Assembly_Content: array(Assembly_Type, Product_Type) of Integer := (
+      Assembly_Content: array(Assembly_Type, Product_Type) of Integer := 
+		(
 			(2, 1, 2, 1, 2),
 	    	(2, 2, 0, 1, 0),
 	    	(1, 1, 2, 0, 1)
