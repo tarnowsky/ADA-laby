@@ -15,19 +15,19 @@ procedure Simulation is
    subtype Product_Type is Integer range 1 .. Number_Of_Products;
    subtype Assembly_Type is Integer range 1 .. Number_Of_Assemblies;
    subtype Consumer_Type is Integer range 1 .. Number_Of_Consumers;
-   Product_Name: constant array (Product_Type) of String(1 .. 7)
+   Product_Name: constant array (Product_Type) of String(1 .. 6)
      := (
-		"Bulka  ", 
-		"Ser    ", 
-		"Szynka ", 
-		"Salata ", 
-		"Pomidor"
+		"Bun   ", 
+		"Cheese", 
+		"Bacon ", 
+		"Letuce", 
+		"Tomato"
 		);
-   Assembly_Name: constant array (Assembly_Type) of String(1 .. 33)
+   Assembly_Name: constant array (Assembly_Type) of String(1 .. 15)
      := (
-		"Kanapka_Szynka_Ser_Salata_Pomidor", 
-		"Kanapka_Szynka_Salata            ", 
-		"Kanapka_Ser_Pomidor              "
+		"BLT Sandwich   ", 
+		"Cheese Sandwich", 
+		"Wege Sandwich  "
 		);
    package Random_Assembly is new
      Ada.Numerics.Discrete_Random(Assembly_Type);
