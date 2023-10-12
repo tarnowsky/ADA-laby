@@ -15,9 +15,9 @@ procedure Simulation is
    subtype Assembly_Type is Integer range 1 .. Number_Of_Assemblies;
    subtype Consumer_Type is Integer range 1 .. Number_Of_Consumers;
    Product_Name: constant array (Product_Type) of String(1 .. 8)
-     := ("Product1", "Product2", "Product3", "Product4", "Product5");
-   Assembly_Name: constant array (Assembly_Type) of String(1 .. 9)
-     := ("Assembly1", "Assembly2", "Assembly3");
+     := ("Bulka", "Ser", "Szynka", "Salata", "Pomidor");
+   Assembly_Name: constant array (Assembly_Type) of String(1 .. 128)
+     := ("Kanapka_Szynka_Ser_Salata_Pomidor", "Kanapka_Szynka_Salata", "Kanapka_Ser_Pomidor");
    package Random_Assembly is new
      Ada.Numerics.Discrete_Random(Assembly_Type);
    type My_Str is new String(1 ..256);
@@ -61,10 +61,10 @@ procedure Simulation is
 				Product_Type_Number := Product;
 				Production := Production_Time;
 			end Start;
-			Put_Line("Started producer of " & Product_Name(Product_Type_Number));
+			Put_Line("PRODUCER: Started producer of " & Product_Name(Product_Type_Number));
 			loop
 				delay Duration(Random_Production.Random(G)); --  symuluj produkcję
-				Put_Line("Produced product " & Product_Name(Product_Type_Number)
+				Put_Line("PRODUCER: Produced product " & Product_Name(Product_Type_Number)
 						& " number "  & Integer'Image(Product_Number));
 				-- Accept for storage
 				B.Take(Product_Type_Number, Product_Number);
@@ -82,7 +82,7 @@ procedure Simulation is
 		Assembly_Number: Integer;
 		Consumption: Integer;
 		Assembly_Type: Integer;
-		Consumer_Name: constant array (1 .. Number_Of_Consumers) of String(1 .. 9) := ("Consumer1", "Consumer2");
+		Consumer_Name: constant array (1 .. Number_Of_Consumers) of String(1 .. 9) := ("Michal", "Wojtek");
 		begin
 			accept Start(Consumer_Number: in Consumer_Type;
 					Consumption_Time: in Integer) 
@@ -92,13 +92,13 @@ procedure Simulation is
 				Consumer_Nb := Consumer_Number;
 				Consumption := Consumption_Time;
 			end Start;
-			Put_Line("Started consumer " & Consumer_Name(Consumer_Nb));
+			Put_Line("CONSUMER: Started consumer " & Consumer_Name(Consumer_Nb));
 			loop
 				delay Duration(Random_Consumption.Random(G)); --  simulate consumption
 				Assembly_Type := Random_Assembly.Random(G2);
 				-- take an assembly for consumption
 				B.Deliver(Assembly_Type, Assembly_Number);
-				Put_Line(Consumer_Name(Consumer_Nb) & ": taken assembly " &
+				Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": taken assembly " &
 						Assembly_Name(Assembly_Type) & " number " &
 						Integer'Image(Assembly_Number));
 			end loop;
@@ -181,33 +181,33 @@ procedure Simulation is
 			return True;
 		end Can_Deliver;
 
-      procedure Storage_Contents is
+      procedure Print_Storage_Contents is
 		begin
 			for W in Product_Type loop
 				Put_Line("Storage contents: " & Integer'Image(Storage(W)) & " "
 					& Product_Name(W));
 			end loop;
-      end Storage_Contents;
+      end Print_Storage_Contents;
 
 	begin
-		Put_Line("Buffer started");
+		Put_Line("BUFFER: Buffer started");
 		Setup_Variables;
 		loop
 			accept Take(Product: in Product_Type; Number: in Integer) do
 				if Can_Accept(Product) then
-					Put_Line("Accepted product " & Product_Name(Product) & " number " &
+					Put_Line("BUFFER: Accepted product " & Product_Name(Product) & " number " &
 					Integer'Image(Number));
 					Storage(Product) := Storage(Product) + 1;
 					In_Storage := In_Storage + 1;
 				else
-					Put_Line("Rejected product " & Product_Name(Product) & " number " &
+					Put_Line("BUFFER: Rejected product " & Product_Name(Product) & " number " &
 						Integer'Image(Number));
 				end if;
 			end Take;
-			Storage_Contents;
+			Print_Storage_Contents;
 			accept Deliver(Assembly: in Assembly_Type; Number: out Integer) do
 				if Can_Deliver(Assembly) then
-					Put_Line("Delivered assembly " & Assembly_Name(Assembly) & " number " &
+					Put_Line("BUFFER: Delivered assembly " & Assembly_Name(Assembly) & " number " &
 						Integer'Image(Assembly_Number(Assembly)));
 					for W in Product_Type loop
 						Storage(W) := Storage(W) - Assembly_Content(Assembly, W);
@@ -216,11 +216,11 @@ procedure Simulation is
 					Number := Assembly_Number(Assembly);
 					Assembly_Number(Assembly) := Assembly_Number(Assembly) + 1;
 				else
-					Put_Line("Lacking products for assembly " & Assembly_Name(Assembly));
+					Put_Line("BUFFER: Lacking products for assembly " & Assembly_Name(Assembly));
 					Number := 0;
 				end if;
 			end Deliver;
-		Storage_Contents;
+		Print_Storage_Contents;
 		end loop;
 	end Buffer;
 	
