@@ -5,7 +5,7 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Integer_Text_IO; 
 with Ada.Numerics.Discrete_Random;
-
+with Ada.Containers.Vectors;
 
 
 procedure Simulation is
@@ -51,7 +51,7 @@ procedure Simulation is
       -- Accept a product to the storage provided there is a room for it
       entry Take(Product: in Product_Type; Number: in Integer);
       -- Deliver an assembly provided there are enough products for it
-      entry Deliver(Assembly: in Assembly_Type; Number: out Integer);
+      entry Deliver(Assembly: in Assembly_Type; Number: out Integer; Did_Assembly: out Boolean);
    end Buffer;
 
    P: array ( 1 .. Number_Of_Products ) of Producer;
@@ -93,6 +93,7 @@ procedure Simulation is
 		Assembly_Number: Integer;
 		Consumption: Integer;
 		Assembly_Type: Integer;
+		Did_Assembly: Boolean;
 		Consumer_Name: constant array (1 .. Number_Of_Consumers) of String(1 .. 6) 
 		:= (
 			"Michal", 
@@ -106,23 +107,31 @@ procedure Simulation is
 				Random_Assembly.Reset(G2);	--  też
 				Consumer_Nb := Consumer_Number;
 				Consumption := Consumption_Time;
+				Did_Assembly := false;
 			end Start;
 			Put_Line("CONSUMER: Started consumer " & Consumer_Name(Consumer_Nb));
 			loop
 				delay Duration(Random_Consumption.Random(G)); --  simulate consumption
 				Assembly_Type := Random_Assembly.Random(G2);
 				-- take an assembly for consumption
-				B.Deliver(Assembly_Type, Assembly_Number);
-				Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": taken assembly " &
-						Assembly_Name(Assembly_Type) & " number " &
-						Integer'Image(Assembly_Number));
+				Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": wants " &
+							Assembly_Name(Assembly_Type));
+				B.Deliver(Assembly_Type, Assembly_Number, Did_Assembly);
+				if Did_Assembly then
+					Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": taken assembly " &
+							Assembly_Name(Assembly_Type) & " number " &
+							Integer'Image(Assembly_Number));
+				-- else
+				--	Put_Line("BUFFER: Lacking products for assembly ");					
+				end if;
 			end loop;
 		end Consumer;
 
    task body Buffer is
-      Storage_Capacity: constant Integer := 30;
+      Storage_Capacity: constant Integer := 8;
       type Storage_type is array (Product_Type) of Integer;
       Storage: Storage_type := (0, 0, 0, 0, 0);
+      Storage_Copy: Storage_type := (0, 0, 0, 0, 0);
       Assembly_Content: array(Assembly_Type, Product_Type) of Integer := 
 		(
 			(2, 1, 2, 1, 2),
@@ -144,6 +153,16 @@ procedure Simulation is
 				end loop;
 			end loop;
 		end Setup_Variables;
+
+      function Can_Deliver(Assembly: Assembly_Type; Checked_Storage : Storage_type) return Boolean is
+		begin
+			for W in Product_Type loop
+				if Checked_Storage(W) < Assembly_Content(Assembly, W) then
+					return False;
+				end if;
+			end loop;
+			return True;
+		end Can_Deliver;
 
       function Can_Accept(Product: Product_Type) return Boolean is
 		Free: Integer;		--  free room in the storage
@@ -178,25 +197,31 @@ procedure Simulation is
 				Lacking(W) := Integer'Max(0, Max_Assembly_Content(W) - Storage(W));
 				Lacking_room := Lacking_room + Lacking(W);
 			end loop;
-			
+
 			if Free >= Lacking_room then
 				-- there is enough room in storage for arbitrary assembly
 				return True;
-			else
-				-- no room for this product
-				return False;
 			end if;
+			-- if buffor is half filled, then we need to check 
+			-- if new product will make assembly possible
+			-- if not, then we do not add it, if it does then we add it
+			-- Check if the buffer is half filled
+			if Free <= Storage_Capacity / 2 then
+				-- copy storage array to ensure safety
+				for i in Product_Type'Range loop
+					Storage_Copy(i) := Storage(i);
+				end loop;
+				Storage_Copy(Product) := Storage_Copy(Product) + 1;
+				for index in 1 .. Number_Of_Assemblies - 1 loop
+					if Can_Deliver(Assembly_Type(index), Storage_Copy) then
+						return True;
+					end if;
+				end loop;
+				Put_Line("BUFFER: Rejected product " & Product_Name(Product) & " to prevent buffer overflow. ");
+			end if;
+			
+			return False;
       end Can_Accept;
-
-      function Can_Deliver(Assembly: Assembly_Type) return Boolean is
-		begin
-			for W in Product_Type loop
-				if Storage(W) < Assembly_Content(Assembly, W) then
-					return False;
-				end if;
-			end loop;
-			return True;
-		end Can_Deliver;
 
       procedure Print_Storage_Contents is
 		begin
@@ -210,33 +235,37 @@ procedure Simulation is
 		Put_Line("BUFFER: Buffer started");
 		Setup_Variables;
 		loop
-			accept Take(Product: in Product_Type; Number: in Integer) do
-				if Can_Accept(Product) then
-					Put_Line("BUFFER: Accepted product " & Product_Name(Product) & " number " &
-					Integer'Image(Number));
-					Storage(Product) := Storage(Product) + 1;
-					In_Storage := In_Storage + 1;
-				else
-					Put_Line("BUFFER: Rejected product " & Product_Name(Product) & " number " &
+			select
+				accept Take(Product: in Product_Type; Number: in Integer) do
+					if Can_Accept(Product) then
+						Put_Line("BUFFER: Accepted product " & Product_Name(Product) & " number " &
 						Integer'Image(Number));
-				end if;
-			end Take;
-			Print_Storage_Contents;
-			accept Deliver(Assembly: in Assembly_Type; Number: out Integer) do
-				if Can_Deliver(Assembly) then
-					Put_Line("BUFFER: Delivered assembly " & Assembly_Name(Assembly) & " number " &
-						Integer'Image(Assembly_Number(Assembly)));
-					for W in Product_Type loop
-						Storage(W) := Storage(W) - Assembly_Content(Assembly, W);
-						In_Storage := In_Storage - Assembly_Content(Assembly, W);
-					end loop;
-					Number := Assembly_Number(Assembly);
-					Assembly_Number(Assembly) := Assembly_Number(Assembly) + 1;
-				else
-					Put_Line("BUFFER: Lacking products for assembly " & Assembly_Name(Assembly));
-					Number := 0;
-				end if;
-			end Deliver;
+						Storage(Product) := Storage(Product) + 1;
+						In_Storage := In_Storage + 1;
+					else
+						Put_Line("BUFFER: Rejected product " & Product_Name(Product) & " number " &
+							Integer'Image(Number));
+					end if;
+				end Take;
+			or
+				accept Deliver(Assembly: in Assembly_Type; Number: out Integer; Did_Assembly: out Boolean) do
+					if Can_Deliver(Assembly, Storage) then
+						Put_Line("BUFFER: Delivered assembly " & Assembly_Name(Assembly) & " number " &
+							Integer'Image(Assembly_Number(Assembly)));
+						for W in Product_Type loop
+							Storage(W) := Storage(W) - Assembly_Content(Assembly, W);
+							In_Storage := In_Storage - Assembly_Content(Assembly, W);
+						end loop;
+						Number := Assembly_Number(Assembly);
+						Assembly_Number(Assembly) := Assembly_Number(Assembly) + 1;
+						Did_Assembly := true;
+					else
+						Put_Line("BUFFER: Lacking products for assembly " & Assembly_Name(Assembly));
+						Number := 0;
+						Did_Assembly := false;
+					end if;
+				end Deliver;
+			end select;
 		Print_Storage_Contents;
 		end loop;
 	end Buffer;
