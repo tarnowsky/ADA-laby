@@ -7,6 +7,7 @@ with Ada.Integer_Text_IO;
 with Ada.Numerics.Discrete_Random;
 
 
+
 procedure Simulation is
    Number_Of_Products: constant Integer := 5;
    Number_Of_Assemblies: constant Integer := 3;
@@ -14,10 +15,20 @@ procedure Simulation is
    subtype Product_Type is Integer range 1 .. Number_Of_Products;
    subtype Assembly_Type is Integer range 1 .. Number_Of_Assemblies;
    subtype Consumer_Type is Integer range 1 .. Number_Of_Consumers;
-   Product_Name: constant array (Product_Type) of String(1 .. 8)
-     := ("Bulka", "Ser", "Szynka", "Salata", "Pomidor");
-   Assembly_Name: constant array (Assembly_Type) of String(1 .. 128)
-     := ("Kanapka_Szynka_Ser_Salata_Pomidor", "Kanapka_Szynka_Salata", "Kanapka_Ser_Pomidor");
+   Product_Name: constant array (Product_Type) of String(1 .. 7)
+     := (
+		"Bulka  ", 
+		"Ser    ", 
+		"Szynka ", 
+		"Salata ", 
+		"Pomidor"
+		);
+   Assembly_Name: constant array (Assembly_Type) of String(1 .. 33)
+     := (
+		"Kanapka_Szynka_Ser_Salata_Pomidor", 
+		"Kanapka_Szynka_Salata            ", 
+		"Kanapka_Ser_Pomidor              "
+		);
    package Random_Assembly is new
      Ada.Numerics.Discrete_Random(Assembly_Type);
    type My_Str is new String(1 ..256);
@@ -82,7 +93,11 @@ procedure Simulation is
 		Assembly_Number: Integer;
 		Consumption: Integer;
 		Assembly_Type: Integer;
-		Consumer_Name: constant array (1 .. Number_Of_Consumers) of String(1 .. 9) := ("Michal", "Wojtek");
+		Consumer_Name: constant array (1 .. Number_Of_Consumers) of String(1 .. 6) 
+		:= (
+			"Michal", 
+			"Wojtek"
+			);
 		begin
 			accept Start(Consumer_Number: in Consumer_Type;
 					Consumption_Time: in Integer) 
