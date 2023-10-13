@@ -12,9 +12,11 @@ procedure Simulation is
    Number_Of_Products: constant Integer := 5;
    Number_Of_Assemblies: constant Integer := 3;
    Number_Of_Consumers: constant Integer := 2;
+
    subtype Product_Type is Integer range 1 .. Number_Of_Products;
    subtype Assembly_Type is Integer range 1 .. Number_Of_Assemblies;
    subtype Consumer_Type is Integer range 1 .. Number_Of_Consumers;
+
    Product_Name: constant array (Product_Type) of String(1 .. 6)
      := (
 		"Bun   ", 
@@ -23,15 +25,17 @@ procedure Simulation is
 		"Letuce", 
 		"Tomato"
 		);
+
    Assembly_Name: constant array (Assembly_Type) of String(1 .. 15)
      := (
 		"BLT Sandwich   ", 
 		"Cheese Sandwich", 
 		"Wege Sandwich  "
 		);
-   package Random_Assembly is new
-     Ada.Numerics.Discrete_Random(Assembly_Type);
-   type My_Str is new String(1 ..256);
+
+   package Random_Assembly is new Ada.Numerics.Discrete_Random(Assembly_Type);
+
+   type My_Str is new String(1 .. 256);
 
    -- Producer produces determined product
    task type Producer is
@@ -42,8 +46,7 @@ procedure Simulation is
    -- Consumer gets an arbitrary assembly of several products from the buffer
    task type Consumer is
       -- Give the Consumer an identity
-      entry Start(Consumer_Number: in Consumer_Type;
-		    Consumption_Time: in Integer);
+      entry Start(Consumer_Number: in Consumer_Type; Consumption_Time: in Integer);
    end Consumer;
 
    -- In the Buffer, products are assemblied into an assembly
@@ -58,13 +61,16 @@ procedure Simulation is
    K: array ( 1 .. Number_Of_Consumers ) of Consumer;
    B: Buffer;
 
-   task body Producer is
+   	task body Producer is
 		subtype Production_Time_Range is Integer range 3 .. 6;
+
 		package Random_Production is new Ada.Numerics.Discrete_Random(Production_Time_Range);
+
 		G: Random_Production.Generator;	--  generator liczb losowych
 		Product_Type_Number: Integer;
 		Product_Number: Integer;
 		Production: Integer;
+
 		begin
 			accept Start(Product: in Product_Type; Production_Time: in Integer) do
 				Random_Production.Reset(G);	--  start random number generator
@@ -72,18 +78,26 @@ procedure Simulation is
 				Product_Type_Number := Product;
 				Production := Production_Time;
 			end Start;
+
 			Put_Line("PRODUCER: Started producer of " & Product_Name(Product_Type_Number));
+
 			loop
 				delay Duration(Random_Production.Random(G)); --  symuluj produkcję
-				Put_Line("PRODUCER: Produced product " & Product_Name(Product_Type_Number)
-						& " number "  & Integer'Image(Product_Number));
+
+				Put_Line(
+					"PRODUCER: Produced product " & 
+					Product_Name(Product_Type_Number) & 
+					" number "  & 
+					Integer'Image(Product_Number)
+				);
+
 				-- Accept for storage
 				B.Take(Product_Type_Number, Product_Number);
 				Product_Number := Product_Number + 1;
 			end loop;
 		end Producer;
 
-   task body Consumer is
+   	task body Consumer is
 		subtype Consumption_Time_Range is Integer range 4 .. 8;
 		package Random_Consumption is new Ada.Numerics.Discrete_Random(Consumption_Time_Range);
 	
@@ -99,28 +113,33 @@ procedure Simulation is
 			"Michal", 
 			"Wojtek"
 			);
+
 		begin
-			accept Start(Consumer_Number: in Consumer_Type;
-					Consumption_Time: in Integer) 
-			do
+			accept Start(Consumer_Number: in Consumer_Type; Consumption_Time: in Integer) do
 				Random_Consumption.Reset(G);	--  ustaw generator
-				Random_Assembly.Reset(G2);	--  też
+				Random_Assembly.Reset(G2);		--  też
 				Consumer_Nb := Consumer_Number;
 				Consumption := Consumption_Time;
 				Did_Assembly := false;
 			end Start;
+
 			Put_Line("CONSUMER: Started consumer " & Consumer_Name(Consumer_Nb));
+
 			loop
 				delay Duration(Random_Consumption.Random(G)); --  simulate consumption
+
 				Assembly_Type := Random_Assembly.Random(G2);
+
 				-- take an assembly for consumption
-				Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": wants " &
-							Assembly_Name(Assembly_Type));
+				Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": wants " & Assembly_Name(Assembly_Type));
+
 				B.Deliver(Assembly_Type, Assembly_Number, Did_Assembly);
 				if Did_Assembly then
-					Put_Line("CONSUMER: " & Consumer_Name(Consumer_Nb) & ": taken assembly " &
-							Assembly_Name(Assembly_Type) & " number " &
-							Integer'Image(Assembly_Number));
+					Put_Line(
+						"CONSUMER: " & Consumer_Name(Consumer_Nb) & ": taken assembly " &
+						Assembly_Name(Assembly_Type) & " number " &
+						Integer'Image(Assembly_Number)
+					);
 				-- else
 				--	Put_Line("BUFFER: Lacking products for assembly ");					
 				end if;
@@ -164,11 +183,11 @@ procedure Simulation is
 			return True;
 		end Can_Deliver;
 
-      function Can_Accept(Product: Product_Type) return Boolean is
-		Free: Integer;		--  free room in the storage
-		-- how many products are for production of arbitrary assembly
-		Lacking: array(Product_Type) of Integer;
-		-- how much room is needed in storage to produce arbitrary assembly
+    	function Can_Accept(Product: Product_Type) return Boolean is
+			Free: Integer;		--  free room in the storage
+			-- how many products are for production of arbitrary assembly
+			Lacking: array(Product_Type) of Integer;
+			-- how much room is needed in storage to produce arbitrary assembly
 		Lacking_room: Integer;
 		MP: Boolean;			--  can accept
 		begin
@@ -270,13 +289,13 @@ procedure Simulation is
 		end loop;
 	end Buffer;
 	
-	begin
-		for I in 1 .. Number_Of_Products loop
-			P(I).Start(I, 10);
-		end loop;
-		for J in 1 .. Number_Of_Consumers loop
-			K(J).Start(J,12);
-		end loop;
+begin
+	for I in 1 .. Number_Of_Products loop
+		P(I).Start(I, 10);
+	end loop;
+	for J in 1 .. Number_Of_Consumers loop
+		K(J).Start(J,12);
+	end loop;
 end Simulation;
 
 
