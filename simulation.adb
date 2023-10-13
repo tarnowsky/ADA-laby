@@ -140,9 +140,7 @@ procedure Simulation is
 					"CONSUMER: " & Consumer_Name(Consumer_ID) & ": taken assembly " &
 					Assembly_Name(Assembly_Type) & " number " &
 					Integer'Image(Assembly_Number)
-				);
-			-- else
-			--	Put_Line("BUFFER: Lacking products for assembly ");					
+				);					
 			end if;
 		end loop;
 	end Consumer;
@@ -193,6 +191,11 @@ procedure Simulation is
 			MP: Boolean;			--  can accept
 		begin
 			if In_Storage >= Storage_Capacity then
+				Put_Line(
+					"BUFFER: Rejected product " & 
+					Product_Name(Product) & 
+					" because there is no space. "
+				);
 				return False;
 			end if;
 
@@ -225,10 +228,23 @@ procedure Simulation is
 				-- there is enough room in storage for arbitrary assembly
 				return True;
 			end if;
+
+			-- to prevent product being too many times in storage:
+			-- if product takes more or equal than max_capacity/number_of_products
+			-- then we do not add it
+			if Storage(Product) > Storage_Capacity / Number_Of_Products  then
+				Put_Line(
+					"BUFFER: Rejected product " & 
+					Product_Name(Product) & 
+					" to prevent product being too many times in storage. "
+				);
+				return False;
+			end if;
+
+			-- to prevent buffer dead lock:
 			-- if buffor is half filled, then we need to check 
 			-- if new product will make assembly possible
 			-- if not, then we do not add it, if it does then we add it
-			-- Check if the buffer is half filled
 			if Free <= Storage_Capacity / 2 then
 				-- copy storage array to ensure safety
 				for Product_ID in Product_Type'Range loop
@@ -246,10 +262,14 @@ procedure Simulation is
 				Put_Line(
 					"BUFFER: Rejected product " & 
 					Product_Name(Product) & 
-					" to prevent buffer overflow. "
+					" to prevent buffer deadlock. "
 				);
+				return False;
 			end if;
-			
+			Put_Line(
+				"BUFFER: Rejected product " &
+				Product_Name(Product)
+			);
 			return False;
       	end Can_Accept;
 
@@ -280,13 +300,6 @@ procedure Simulation is
 
 						Storage(Product) := Storage(Product) + 1;
 						In_Storage := In_Storage + 1;
-					else
-						Put_Line(
-							"BUFFER: Rejected product " &
-							Product_Name(Product) & 
-							" number " &
-							Integer'Image(Number)
-						);
 					end if;
 				end Take;
 			or
