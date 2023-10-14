@@ -113,7 +113,7 @@ procedure Simulation2 is
 				productNames(productTypeID) & 
 				" number " &
 				Integer'Image(productID) &
-				" was produced."
+				" produced."
 			);
 
 			loop
