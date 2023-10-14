@@ -1,4 +1,3 @@
-simulation.ali
-simulation.exe
-simulation.o
-b~simulation.ads
+*.ali
+*.exe
+*.o

@@ -114,7 +114,7 @@ procedure Simulation2 is
 				productNames(productTypeID) & 
 				" number " &
 				Integer'Image(productID) &
-				" was produced."
+				" produced."
 			);
 
 			loop
@@ -286,20 +286,15 @@ procedure Simulation2 is
 			return False;
 		end canTake;
 
-
-		procedure printStorageContent is
-			str: Unbounded_String;
+		procedure storageContent is
 		begin
-			Append(str, "Buffer: storage content: ");
+			Put_Line("");
+			Put_Line("Buffer: storage content: ");
 			for prod in productRange loop
-				Append(str, Integer'Image(storage(prod)) & ", ");
-				if prod = numOfProducts then
-					Append(str, ASCII.LF); --WTF
-				end if;
+				Put_Line(productNames(prod) & ": " & Integer'Image(storage(prod)));
 			end loop;
-
-			Put_Line(To_String(str));
-		end printStorageContent;
+			Put_Line("");
+		end storageContent;
 
 		procedure deleteProduct(product: in productRange) is
 		begin
