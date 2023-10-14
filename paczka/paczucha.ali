@@ -1,0 +1,287 @@
+V "GNAT Lib v13"
+M P W=b
+P SS ZX
+
+RN
+RV NO_DELAY
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_FIXED_POINT
+RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_NESTED_FINALIZATION
+RV NO_RELATIVE_DELAY
+RV NO_SECONDARY_STACK
+RV NO_SELECT_STATEMENTS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_TASK_HIERARCHY
+RV NO_TASKING
+RV NO_DEFAULT_INITIALIZATION
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLICIT_LOOPS
+RV NO_OBSOLESCENT_FEATURES
+RV MAX_SELECT_ALTERNATIVES=2
+RV MAX_TASK_ENTRIES=1
+RV MAX_TASKS=1+
+RV MAX_ASYNCHRONOUS_SELECT_NESTING=1+
+
+U paczucha%b		paczucha.adb		026daefc NE OO SU
+W ada%s			ada.ads			ada.ali
+Z ada.calendar.delays%s	a-caldel.adb		a-caldel.ali
+Z ada.exceptions%s	a-except.adb		a-except.ali
+W ada.integer_text_io%s	a-inteio.ads		a-inteio.ali
+W ada.numerics%s	a-numeri.ads		a-numeri.ali
+W ada.numerics.discrete_random%s
+Z ada.real_time%s	a-reatim.adb		a-reatim.ali
+W ada.strings%s		a-string.ads		a-string.ali
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W ada.strings.unbounded%s  a-strunb.adb		a-strunb.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W system%s		system.ads		system.ali
+Z system.concat_2%s	s-conca2.adb		s-conca2.ali
+Z system.concat_3%s	s-conca3.adb		s-conca3.ali
+Z system.concat_4%s	s-conca4.adb		s-conca4.ali
+Z system.concat_5%s	s-conca5.adb		s-conca5.ali
+Z system.concat_6%s	s-conca6.adb		s-conca6.ali
+Z system.img_int%s	s-imgint.ads		s-imgint.ali
+Z system.parameters%s	s-parame.adb		s-parame.ali
+Z system.random_numbers%s  s-rannum.adb		s-rannum.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+Z system.soft_links%s	s-soflin.adb		s-soflin.ali
+Z system.standard_library%s  s-stalib.adb	s-stalib.ali
+Z system.task_info%s	s-tasinf.adb		s-tasinf.ali
+Z system.tasking%s	s-taskin.adb		s-taskin.ali
+Z system.tasking.async_delays%s  s-taasde.adb	s-taasde.ali
+Z system.tasking.rendezvous%s  s-tasren.adb	s-tasren.ali
+Z system.tasking.stages%s  s-tassta.adb		s-tassta.ali
+
+D ada.ads		20230814081616 76789da1 ada%s
+D a-assert.ads		20230814081616 ba465f5c ada.assertions%s
+D a-calend.ads		20230814081616 f55c50a3 ada.calendar%s
+D a-caldel.ads		20230814081616 9f20b83d ada.calendar.delays%s
+D a-charac.ads		20230814081616 2d3ec45b ada.characters%s
+D a-chlat1.ads		20230814081616 e0d72e76 ada.characters.latin_1%s
+D a-except.ads		20230814081616 2a7d8d70 ada.exceptions%s
+D a-finali.ads		20230814081616 bf4f806b ada.finalization%s
+D a-inteio.ads		20230814081616 f64b89a4 ada.integer_text_io%s
+D a-ioexce.ads		20230814081616 40018c65 ada.io_exceptions%s
+D a-numeri.ads		20230814081616 84bea7a3 ada.numerics%s
+D a-nubinu.ads		20230814081616 93f1f3d1 ada.numerics.big_numbers%s
+D a-nbnbig.ads		20230814081616 711e0174 ada.numerics.big_numbers.big_integers_ghost%s
+D a-nudira.ads		20230814081616 5984dff3 ada.numerics.discrete_random%s
+D a-nudira.adb		20230814081616 0bfd6ec4 ada.numerics.discrete_random%b
+D a-reatim.ads		20230814081616 b89a10c3 ada.real_time%s
+D a-stream.ads		20230814081616 119b8fb3 ada.streams%s
+D a-string.ads		20230814081616 90ac6797 ada.strings%s
+D a-strmap.ads		20230814081616 ed8acfdb ada.strings.maps%s
+D a-sttebu.ads		20230814081616 f1ad67a2 ada.strings.text_buffers%s
+D a-strunb.ads		20230814081616 7bfb7010 ada.strings.unbounded%s
+D a-stuten.ads		20230814081616 c6ced0ae ada.strings.utf_encoding%s
+D a-tags.ads		20230814081616 9eaa38c6 ada.tags%s
+D a-textio.ads		20230814081616 5c2c6153 ada.text_io%s
+D a-tiinio.ads		20230814081616 e58fa6fb ada.text_io.integer_io%s
+D a-unccon.ads		20230814081616 0e9b276f ada.unchecked_conversion%s
+D interfac.ads		20230814081616 15f799c2 interfaces%s
+D i-c.ads		20230814081616 5c5a6c17 interfaces.c%s
+D i-cstrin.ads		20230814081616 f40c8db4 interfaces.c.strings%s
+D i-cstrea.ads		20230814081616 e53d8b8e interfaces.c_streams%s
+D paczucha.adb		20231014105952 0ecb4e4b paczucha%b
+D system.ads		20230814081616 f0509fe6 system%s
+D s-atacco.ads		20230814081616 903317eb system.address_to_access_conversions%s
+D s-assert.ads		20230814081616 9c4520c7 system.assertions%s
+D s-atocou.ads		20230814081616 dc18efc3 system.atomic_counters%s
+D s-casuti.ads		20230814081616 cf13d755 system.case_util%s
+D s-conca2.ads		20230814081616 b5fb73f7 system.concat_2%s
+D s-conca3.ads		20230814081616 8a7a19a2 system.concat_3%s
+D s-conca4.ads		20230814081616 33f85f3e system.concat_4%s
+D s-conca5.ads		20230814081616 4099d1db system.concat_5%s
+D s-conca6.ads		20230814081616 8252f108 system.concat_6%s
+D s-crtl.ads		20230814081616 8a0692f8 system.crtl%s
+D s-exctab.ads		20230814081616 91bef6ef system.exception_table%s
+D s-ficobl.ads		20230814081616 dc5161d4 system.file_control_block%s
+D s-finroo.ads		20230814081616 4ff27390 system.finalization_root%s
+D s-imagei.ads		20230814081616 c707dfd0 system.image_i%s
+D s-imageu.ads		20230814081616 631c6ed0 system.image_u%s
+D s-imgint.ads		20230814081616 d4a52a9b system.img_int%s
+D s-imguns.ads		20230814081616 7867236f system.img_uns%s
+D s-memory.ads		20230814081616 5b8432d0 system.memory%s
+D s-multip.ads		20230814081616 38ac9f73 system.multiprocessors%s
+D s-osinte.ads		20230814081616 97504df8 system.os_interface%s
+D s-parame.ads		20230814081616 d494a4a6 system.parameters%s
+D s-putima.ads		20230814081616 17291fe4 system.put_images%s
+D s-rannum.ads		20230814081616 95815eca system.random_numbers%s
+D s-rannum.adb		20230814081616 0f2dcb9a system.random_numbers%b
+D s-ransee.ads		20230814081616 01a57b33 system.random_seed%s
+D s-retsta.ads		20230814081616 0f6b06cb system.return_stack%s
+D s-secsta.ads		20230814081616 578279f5 system.secondary_stack%s
+D s-soflin.ads		20230814081616 df77073e system.soft_links%s
+D s-stache.ads		20230814081616 0b81c1fe system.stack_checking%s
+D s-stausa.ads		20230814081616 5be75682 system.stack_usage%s
+D s-stalib.ads		20230814081616 1c9580f6 system.standard_library%s
+D s-stalib.adb		20230814081616 eb464a47 system.standard_library%b
+D s-stoele.ads		20230814081616 ab5468e4 system.storage_elements%s
+D s-stoele.adb		20230814081616 8f5a9db6 system.storage_elements%b
+D s-stratt.ads		20230814081616 f7dfd786 system.stream_attributes%s
+D s-tasinf.ads		20230814081616 601f6b72 system.task_info%s
+D s-taspri.ads		20230814081616 a1350802 system.task_primitives%s
+D s-taprop.ads		20230814081616 6eefbe12 system.task_primitives.operations%s
+D s-taskin.ads		20230814081616 0ec7ab0b system.tasking%s
+D s-taasde.ads		20230814081616 422600df system.tasking.async_delays%s
+D s-taprob.ads		20230814081616 acd6094d system.tasking.protected_objects%s
+D s-tpoben.ads		20230814081616 60ad3dae system.tasking.protected_objects.entries%s
+D s-tasren.ads		20230814081616 a67a9949 system.tasking.rendezvous%s
+D s-tassta.ads		20230814081616 cca55c94 system.tasking.stages%s
+D s-traent.ads		20230814081616 c81cbf8c system.traceback_entries%s
+D s-unstyp.ads		20230814081616 fa2a7f59 system.unsigned_types%s
+D s-valint.ads		20230814081616 1f610d7a system.val_int%s
+D s-valuns.ads		20230814081616 e8a1f424 system.val_uns%s
+D s-valuti.ads		20230814081616 fcd603d8 system.val_util%s
+D s-valuei.ads		20230814081616 11081e09 system.value_i%s
+D s-vaispe.ads		20230814081616 44130d39 system.value_i_spec%s
+D s-valueu.ads		20230814081616 18770347 system.value_u%s
+D s-vauspe.ads		20230814081616 a67b2f28 system.value_u_spec%s
+D s-wchcon.ads		20230814081616 d9032363 system.wch_con%s
+D s-widuns.ads		20230814081616 866a5800 system.wid_uns%s
+D s-widthu.ads		20230814081616 b32f15e2 system.width_u%s
+D s-win32.ads		20230814081616 15ac53fb system.win32%s
+G a e
+G c Z b b [paczucha standard 10 11 none]
+X 1 ada.ads
+16K9*Ada 20e8 31|1r6 2r5 3r6 4r6 5r6 6r5 7r6 8r5
+X 9 a-inteio.ads
+18K13*Integer_Text_IO[25|46] 31|3w10
+X 11 a-numeri.ads
+16K13*Numerics 35e17 31|4r10 5w10 6r9
+X 14 a-nudira.ads
+44k22*Discrete_Random 81e33 31|4w19 59r42 60r38 86r49
+50R9 Generator<55|65R9> 31|88r45[86] 124r46[59] 125r43[60]
+52V13 Random{integer} 31|106s57[86] 143s58[59] 145s57[60] 168s58[59]
+61U14 Reset<55|103p14> 31|97s42[86] 134s43[59] 135s39[60]
+X 15 a-nudira.adb
+53V16 Random[55|86]{integer} 56|402b13[31|60]
+65V16 Random[55|86]{integer} 56|402b13[31|60]
+X 18 a-string.ads
+16K13*Strings 35e16 31|7r10 8r9
+X 21 a-strunb.ads
+85K21*Unbounded 766e26 31|7w18 8r17
+91R9*Unbounded_String<8|43R9> 745e15 31|236r30
+121V13*To_String{string} 31|247s34
+140U14*Append 31|238s25 240s33
+148U14*Append 31|243s41
+X 24 a-textio.ads
+58K13*Text_IO 787e16 31|1w10 2r9
+566U14*Put_Line 31|103s17 107s25 112s41 142s25 151s33 154s33 158s49 161s49
+. 162s49 247s25 257s17 259s25 263s49 278s33 285s49 292s57
+X 27 interfac.ads
+80M9*Unsigned_32
+83M9*Unsigned_64
+X 31 paczucha.adb
+10U11*Paczucha 10b11 327l5 327t13
+15i9 Liczba_Wyrobow{integer} 30r54 79r32 242r40 318r23
+16i9 Liczba_Ciast{integer} 31r52
+17i9 Liczba_Klientow{integer} 32r55 80r29 323r23
+18i9 Czas_Oczekiwania_Klienta{integer} 150r48
+19i9 Czas_Oczekiwania_Skladnika{integer}
+21i9 Pojemnosc_Magazynu{integer} 187r43 190r42
+27I17 Zakres_Czasu_Produkcji{integer} 86r65
+28I17 Zakres_Czasu_Konsumpcji{integer} 59r58
+30I17 Zakres_Wyrobow{integer} 36r36 42r39 52r44 65r41 73r42 96r42 177r35
+. 180r47 183r51 184r41 194r42 201r50 214r34 225r34 239r34 250r51 265r58 279r59
+. 296r66
+31I17 Zakres_Ciast{integer} 45r40 52r30 55r30 60r54 74r40 183r37 199r42 223r46
+. 261r57
+32I17 Zakres_Klientow{integer} 48r42 69r52 127r32 133r53
+36A14 Typ_Magazynu(integer)<integer> 51r18 182r34
+42a9 Nazwa_Wyrobu(string) 103r60 107r64 112r101 285r83
+45a9 Nazwa_Zestawu(string) 154r115 158r99 161r119 263r81
+48a9 Nazwa_Konsumenta(string) 142r67 151r67 154r64 158r149 161r73 162r83
+51a9 Magazyn{36A14} 191r44 226r36 240r59 252m25 252r43 266m57 266r71 282m49
+. 282r67 298r68 298r81 299r86
+52a9 Sklad_Zestawu(integer) 203r78 226r49 266r84 267r86
+55a9 Numer_Zestawu(integer) 263r128 270r58 271m49 271r74
+59K17 Losowa_Konsumpcja[14|44] 124r28 134r25 143r40 168r40
+60K17 Losowy_Zestaw[14|44] 125r29 135r25 145r43
+64T19 TProducent 66l13 66e23 79r51 85b19 121l13 121t23
+65Y23 Zacznij 65>31 65>57 96b24 101l21 101t28 320s31
+65i31 Wyrob{30I17} 99r43
+65i57 Czas_Produkcji{integer} 100r38
+68T19 TKonsument 70l13 70e23 80r49 123b19 170l13 170t23
+69Y23 Zacznij 69>31 69>69 133b24 139l21 139t28 325s28
+69i31 Numer_Konsumenta{32I17} 137r42
+69i69 Czas_Konsumpcji{integer} 138r39
+72T19 TBufor 75l13 75e19 81r16 172b19 313l13 313t19
+73Y23 Przyjmij 73>32 73>58 73<77 110s39 279b40 308l37 308t45
+73i32 Wyrob{30I17} 281r58 282r57 282r75 285r96
+73i58 Numer{integer}
+73b77 Czy_Przyjeto{boolean} 284m49 284r49 288m49 288r49
+74Y23 Wydaj 74>29 74<54 156s47 261b40 275l37 275t42
+74i29 Zestaw{31I17} 262r56 263r95 263r142 266r98 267r100 270r72 271r63 271r88
+74i54 Numer{integer} 270m49 270r49 273m49 273r49
+79a9 Producenci(64T19) 320r17
+80a9 Klienci(68T19) 325r17
+81t9 Bufor{72T19} 110r33 156r41
+86K25 Losowa_Produkcja[14|44] 88r28 97r25 106r40
+88r17 Generator{14|50R9[86]} 97r48 106r64
+89i17 Numer_Wyrobu{integer} 107r121 110r64 116m41 116r57
+91i17 Nr_Typu_Wyrobu{integer} 99m25 103r73 107r77 110r48 112r114
+92i17 Produkcja{integer} 100m25
+93b17 Przyjeto{boolean} 110m78 111r36
+96i32 Wyrob{30I17}
+96i58 Czas_Produkcji{integer}
+124r17 Generator{14|50R9[59]} 134r49 143r65 168r65
+125r17 Generator2{14|50R9[60]} 135r45 145r64
+127i17 Nr_Konsumenta{32I17} 137m25 142r84 151r84 154r81 158r166 161r90 162r100
+128i17 Numer_Zestawu{integer} 156m69 157r44 161r172
+129i17 Konsumpcja{integer} 138m25
+130i17 Rodzaj_Zestawu{integer} 145m25 154r129 156r53 158r113 161r133
+133i32 Numer_Konsumenta{32I17}
+133i70 Czas_Konsumpcji{integer}
+173i17 W_Magazynie{integer} 187r28 190r63 253m25 253r40 267m57 267r72 283m49
+. 283r64
+175i17 Licznik_Nie_Przyjeto{integer} 286m49 290m49 290r73 291r52 304m57
+176i17 Max_Wyrob{integer} 294m57 299m73
+177i17 Max_Wyrob_Rodzaj{30I17} 295m57 298r89 300m73 303r71
+180V26 Mozna_Przyjac{boolean} 180b26 180>40 220l21 220t34 281s44
+180i40 Wyrob{30I17} 192r41 192r59
+181i25 Wolne{integer} 190m33 219r32
+182a25 Tmp_Mag{36A14} 191m33 192m33 192r51 203r100
+183a25 Brak(integer) 203m49 205r52 206r72
+184a25 Max_Brak(integer) 196m41 205r65 206m57 216r50
+185i25 Braki{integer} 212m25 216m33 216r42 219r41
+194i37 W{30I17} 196r50
+199i37 Z{31I17} 203r54 203r92 205r57 206r77
+201i45 W{30I17} 203r57 203r95 203r108 205r60 205r74 206r66 206r80
+214i29 W{30I17} 216r59
+223V26 Mozna_Wydac{boolean} 223b26 223>38 232l21 232t32 262s44
+223i38 Zestaw{31I17} 226r63
+225i29 W{30I17} 226r44 226r71
+235U27 Sklad_Magazynu 235b27 248l21 248t35 305s57 311s25
+236r25 Str{21|91R9} 238m32 238r32 240m40 240r40 243m48 243r48 247r44
+239i29 W{30I17} 240r67 242r36
+250U27 Usun_Skladnik 250b27 250>41 254l21 254t34 303s57
+250i41 Wyrob{30I17} 252r33 252r51
+261i46 Zestaw{31I17}
+261i71 Numer{integer}
+265i53 W{30I17} 266r65 266r79 266r106 267r108
+279i49 Wyrob{30I17}
+279i75 Numer{integer}
+279b94 Czy_Przyjeto{boolean}
+296i61 W{30I17} 298r76 299r94 300r93
+318i13 i{integer} 320r28 320r39
+323i13 j{integer} 325r25 325r36
+X 32 system.ads
+67M9*Address
+X 50 s-memory.ads
+51V13*Alloc{32|67M9} 101i<c,__gnat_malloc>22
+66U14*Free 102i<c,__gnat_free>22
+74V13*Realloc{32|67M9} 103i<c,__gnat_realloc>22
+X 55 s-rannum.ads
+77V13*Random{27|80M9} 56|224i21
+78V13*Random{27|83M9} 56|224i21
+X 62 s-stausa.ads
+207U14*Initialize 208i<c,__gnat_stack_usage_initialize>22
+272U14*Output_Results 276i<c,__gnat_stack_usage_output_results>22
+X 64 s-stalib.adb
+87U14 Break_Start 88i<c,__gnat_break_start>22
+
