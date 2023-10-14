@@ -286,7 +286,7 @@ procedure Simulation2 is
 			return False;
 		end canTake;
 
-		procedure storageContent is
+		procedure printStorageContent is
 		begin
 			Put_Line("");
 			Put_Line("Buffer: storage content: ");
@@ -294,7 +294,7 @@ procedure Simulation2 is
 				Put_Line(productNames(prod) & ": " & Integer'Image(storage(prod)));
 			end loop;
 			Put_Line("");
-		end storageContent;
+		end printStorageContent;
 
 		procedure deleteProduct(product: in productRange) is
 		begin
