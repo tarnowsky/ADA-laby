@@ -236,17 +236,13 @@ procedure Simulation2 is
 		end canDeliver;
 
 		procedure storageContent is
-			str: Unbounded_String;
 		begin
-			Append(str, "Buffer: storage content: ");
+			Put_Line("");
+			Put_Line("Buffer: storage content: ");
 			for prod in productRange loop
-				Append(str, Integer'Image(storage(prod)) & ", ");
-				if prod = numOfProducts then
-					Append(str, ASCII.LF); --WTF
-				end if;
+				Put_Line(productNames(prod) & ": " & Integer'Image(storage(prod)));
 			end loop;
-
-			Put_Line(To_String(str));
+			Put_Line("");
 		end storageContent;
 
 		procedure deleteProduct(product: in productRange) is
