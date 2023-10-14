@@ -21,7 +21,7 @@ use Ada.Numerics;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
 
-procedure Simulation2 is
+procedure Simulation is
 	numOfProducts: constant Integer := 5;
 	numOfSets: constant Integer := 3;
 	numOfCustomers: constant Integer := 2;
@@ -362,5 +362,5 @@ begin
 	loop
 		customers(customer).Start(customer, 12);
 	end loop;
-end Simulation2;
+end Simulation;
 
