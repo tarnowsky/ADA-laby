@@ -205,7 +205,7 @@ procedure Simulation2 is
 			if inStorage >= storageCapacity then
 				if not fromNotAccepted then
 					Put_Line(
-						"BUFFER: Rejected product " & 
+						"Buffer: Rejected product " & 
 						productNames(Product) & 
 						" because there is no space. "
 					);
@@ -247,7 +247,7 @@ procedure Simulation2 is
 			if storage(product) >= (storageCapacity / numOfProducts) then
 				if not fromNotAccepted then
 					Put_Line(
-						"BUFFER: Rejected product " & 
+						"Buffer: Rejected product " & 
 						productNames(product) & 
 						" to prevent product being too many times in storage. "
 					);
@@ -275,7 +275,7 @@ procedure Simulation2 is
 				
 				if not fromNotAccepted then 
 					Put_Line(
-						"BUFFER: Rejected product " & 
+						"Buffer: Rejected product " & 
 						productNames(product) & 
 						" to prevent buffer deadlock. "
 					);
@@ -321,7 +321,7 @@ procedure Simulation2 is
 				end Deliver;
 				
 				or  delay Duration(3.0);
-				Put_Line("BUFFER: No orders. Accepting products procedure...");
+				Put_Line("Buffer: No orders. Accepting products procedure...");
 					
 				accept Take(product: in productRange; number: in Integer; isTaken: out Boolean) do
 					--Put_Line("B [debug]: Przyjmiesz? " & Nazwa_productu(product) & " nr" & Integer'Image(Numer) & " na polke");
@@ -329,7 +329,7 @@ procedure Simulation2 is
 						storage(product) := storage(product) + 1;
 						inStorage := inStorage + 1;
 						isTaken := True;
-						Put_Line("BUFFER: Taken " & productNames(product) & ".");
+						Put_Line("Buffer: Taken " & productNames(product) & ".");
 						notTakenCounter := 0;
 					else
 						notAcceptedProducts(product) := notAcceptedProducts(product) + 1;
@@ -341,7 +341,7 @@ procedure Simulation2 is
 								storage(prod) := storage(prod) + 1;
 								notAcceptedProducts(prod) := notAcceptedProducts(prod) - 1;
 								inStorage := inStorage + 1;
-								Put_Line("BUFFER: Taken " & productNames(prod) & " from unaccepted products.");
+								Put_Line("Buffer: Taken " & productNames(prod) & " from unaccepted products.");
 								exit;
 							end if;
 						end loop;
