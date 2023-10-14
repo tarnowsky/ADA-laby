@@ -34,7 +34,7 @@ procedure Simulation is
 	subtype setRange is Integer range 1 .. numOfSets;
 	subtype customerRange is Integer range 1 .. numOfCustomers;
 
-	type bufforType is array (productRange) of Integer;
+	type storageType is array (productRange) of Integer;
 
 	productNames: constant array (productRange) of String (1 .. 6) := (
 		"Bun   ", 
@@ -50,10 +50,37 @@ procedure Simulation is
 		"Wege Sandwich  "
 	);
 
-	buffor: bufforType := (0, 0, 0, 0, 0);
+	customerNames: constant array(customerRange) of String(1 .. 6) := (
+		"Michal",
+		"Wojtek"
+	);
+
+	storage: storageType := (0, 0, 0, 0, 0);
 
 	setComposition: array(setRange, productRange) of Integer := (
-		(2)
-	)
+		(2, 1, 2, 1, 2),
+		(2, 2, 0, 1, 0),
+		(1, 1, 2, 0, 1)
+	);
 
+	setID: array(setRange) of Integer := (1, 1, 1);
+
+	package randomConsumption is new Discrete_Random(consumptionTimeRange);
+	package randomSet is new Discrete_Random(setRange);
+
+	task type producerType is
+		entry Start(
+			product: in productRange;
+			productionTime: in Integer;
+		);
+	end producerType;
+
+	task type customerType is
+		entry Start(customerID: in customerRange; consumptionTime: in Integer);
+	end customerType;
+
+	task type bufforType is
+		entry Take(product: in productRange; number: in Integer; Czy_Przyjeto: out Boolean);
+		entry Give(Zestaw: in Zakres_Ciast; Numer: out Integer);
+	end bufforType;
 	
