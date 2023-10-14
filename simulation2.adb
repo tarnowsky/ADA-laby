@@ -71,7 +71,7 @@ procedure Simulation2 is
 	task type producerType is
 		entry Start(
 			product: in productRange;
-			productionTime: in Integer;
+			productionTime: in Integer
 		);
 	end producerType;
 
@@ -129,17 +129,18 @@ procedure Simulation2 is
 					productID := productID + 1;
 				end if;
 				exit;
-			end loop
+			end loop;
 		end loop;
 	end producerType;
 
 	task body customerType is
 		consumptionGenerator: randomConsumption.Generator;
 		setGenerator: randomSet.Generator;
+
 		customerID: customerRange;
 		setID: Integer;
 		consumption: Integer;
-		chosenSet: Integer
+		chosenSet: Integer;
 	begin
 		accept Start(customer: in customerRange; consumptionTime: in Integer) do
 			randomConsumption.Reset(consumptionGenerator);
@@ -150,7 +151,7 @@ procedure Simulation2 is
 
 		loop
 			Put_Line("Customer: " & customerNames(customerID) & " is here.");
-			delay Duration(randomConsumption(consumptionGenerator));
+			delay Duration(randomConsumption.Random(consumptionGenerator));
 
 			chosenSet := randomSet.Random(setGenerator);
 
@@ -158,7 +159,7 @@ procedure Simulation2 is
 				delay Duration(customerWaitTime);
 				Put_Line("Customer: " & customerNames(customerID) & " leaves. Reason: Wait time.");
 			then abort
-				Put_Line("Customer: " & customerNames(customerID) & " wants to buy " & setNames(chosenSet););
+				Put_Line("Customer: " & customerNames(customerID) & " wants to buy " & setNames(chosenSet));
 				loop
 					buffer.Deliver(chosenSet, setID);
 					if setID = 0 then
@@ -198,7 +199,7 @@ procedure Simulation2 is
 				for prod in productRange
 				loop
 					maxLack(prod) := 0;
-				end loop
+				end loop;
 
 				for aSet in setRange
 				loop
@@ -273,7 +274,7 @@ procedure Simulation2 is
 					else
 						number := 0;
 					end if;
-				end Wydaj;
+				end Deliver;
 
 			or delay Duration(3.0);
 				Put_Line("Buffer: No orders. Accepting products procedure...");
@@ -283,7 +284,7 @@ procedure Simulation2 is
 						storage(product) := storage(product) + 1;
 						inStorage := inStorage + 1;
 						isTaken := True;
-						Put_Line("Buffer: Taken " & productNames(Wyrob) & ".");
+						Put_Line("Buffer: Taken " & productNames(product) & ".");
 						notTakenCounter := 0;
 					else
 						isTaken := False;
@@ -306,7 +307,7 @@ procedure Simulation2 is
 							storageContent;
 						end if;
 					end if;
-				end Przyjmij;
+				end Take;
 
 			end select;
 			storageContent;
