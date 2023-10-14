@@ -56,6 +56,7 @@ procedure Simulation2 is
 	);
 
 	storage: storageType := (0, 0, 0, 0, 0);
+	storageCopy: storageType := (0, 0, 0, 0, 0);
 
 	setComposition: array(setRange, productRange) of Integer := (
 		(2, 1, 2, 1, 2),
@@ -182,6 +183,17 @@ procedure Simulation2 is
 		maxProduct: Integer := 0;
 		maxProductType: productRange := 1;
 
+		function canDeliver(set: setRange; checkedStorage : storageType) return Boolean is
+		begin
+			for prod in productRange loop
+				if checkedStorage(prod) < setComposition(set, prod) then
+					return False;
+				end if;
+			end loop;
+
+			return True;
+		end canDeliver;
+		
 		function canTake(product: productRange) return Boolean is
 			Free: Integer;
 			tmpStorage: storageType;
@@ -190,6 +202,11 @@ procedure Simulation2 is
 			lacks: Integer;
 		begin
 			if inStorage >= storageCapacity then
+				Put_Line(
+					"BUFFER: Rejected product " & 
+					productNames(Product) & 
+					" because there is no space. "
+				);
 				return False;
 			else
 				Free := storageCapacity - inStorage;
@@ -221,21 +238,56 @@ procedure Simulation2 is
 				lacks := lacks + maxLack(prod);
 			end loop;
 
-			return Free >= lacks;
+			if Free >= lacks then
+				return True;
+			end if;
+			
+			-- to prevent product being too many times in storage:
+			-- if product takes more or equal than storageCapacity/numOfProducts
+			-- then we do not add it
+			if storage(product) > storageCapacity / numOfProducts  then
+				Put_Line(
+					"BUFFER: Rejected product " & 
+					productNames(product) & 
+					" to prevent product being too many times in storage. "
+				);
+				return False;
+			end if;
+
+			-- to prevent buffer dead lock:
+			-- if buffor is half filled, then we need to check 
+			-- if new product will make assembly possible
+			-- if not, then we do not add it, if it does then we add it
+			if Free <= storageCapacity / 2 then
+				-- copy storage array to ensure safety
+				for productId in productRange'Range loop
+					storageCopy(productId) := storage(productId);
+				end loop;
+
+				storageCopy(product) := storageCopy(product) + 1;
+
+				for set in 1 .. numOfSets - 1 loop
+					if canDeliver(setRange(set), storageCopy) then
+						return True;
+					end if;
+				end loop;
+
+				Put_Line(
+					"BUFFER: Rejected product " & 
+					productNames(product) & 
+					" to prevent buffer deadlock. "
+				);
+				return False;
+			end if;
+			Put_Line(
+				"BUFFER: Rejected product " &
+				productNames(product)
+			);
+			return False;
 		end canTake;
 
-		function canDeliver(set: setRange) return Boolean is
-		begin
-			for prod in productRange loop
-				if storage(prod) < setComposition(set, prod) then
-					return False;
-				end if;
-			end loop;
 
-			return True;
-		end canDeliver;
-
-		procedure storageContent is
+		procedure printStorageContent is
 			str: Unbounded_String;
 		begin
 			Append(str, "Buffer: storage content: ");
@@ -247,7 +299,7 @@ procedure Simulation2 is
 			end loop;
 
 			Put_Line(To_String(str));
-		end storageContent;
+		end printStorageContent;
 
 		procedure deleteProduct(product: in productRange) is
 		begin
@@ -261,7 +313,7 @@ procedure Simulation2 is
 			Put_Line("Buffer: Waiting for order...");
 			select
 				accept Deliver(set: in setRange; number: out Integer) do
-					if canDeliver(set) then
+					if canDeliver(set, storage) then
 						Put_Line("Buffer: Delivered: " & setNames(set) & " nr " & Integer'Image(setID(set)));
 
 						for prod in productRange loop
@@ -276,8 +328,6 @@ procedure Simulation2 is
 					end if;
 				end Deliver;
 
-			or delay Duration(3.0);
-				Put_Line("Buffer: No orders. Accepting products procedure...");
 				accept Take(product: in productRange; number: in Integer; isTaken: out Boolean) do
 					--Put_Line("B [debug]: Przyjmiesz? " & Nazwa_productu(product) & " nr" & Integer'Image(Numer) & " na polke");
 					if canTake(product) then
@@ -304,13 +354,14 @@ procedure Simulation2 is
 							end loop;
 							deleteProduct(maxProductType);
 							notTakenCounter := 0;
-							storageContent;
+							printStorageContent;
 						end if;
 					end if;
 				end Take;
-
+				or  delay Duration(3.0);				
+					Put_Line("Buffer: No orders. Accepting products procedure...");
 			end select;
-			storageContent;
+			printStorageContent;
 		end loop;
 	end bufferType;
 
