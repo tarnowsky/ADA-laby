@@ -55,13 +55,14 @@ procedure Simulation2 is
 		"Wojtek"
 	);
 
-	storage: storageType := (0, 0, 0, 0, 0);
+	storage: storageType := (1, 1, 1, 1, 1);
 	storageCopy: storageType := (0, 0, 0, 0, 0);
+	notAcceptedProducts: storageType := (0, 0, 0, 0, 0);
 
 	setComposition: array(setRange, productRange) of Integer := (
 		(2, 1, 2, 1, 2),
 		(2, 2, 0, 1, 0),
-		(1, 1, 2, 0, 1)
+		(2, 1, 0, 0, 1)
 	);
 
 	setID: array(setRange) of Integer := (1, 1, 1);
@@ -194,19 +195,21 @@ procedure Simulation2 is
 			return True;
 		end canDeliver;
 		
-		function canTake(product: productRange) return Boolean is
-			Free: Integer;
+		function canTake(product: productRange; fromNotAccepted : Boolean) return Boolean is
+			Free: Integer; -- free room in the storage
 			tmpStorage: storageType;
 			lack: array(setRange, productRange) of Integer;
 			maxLack: array(productRange) of Integer;
 			lacks: Integer;
 		begin
 			if inStorage >= storageCapacity then
-				Put_Line(
-					"BUFFER: Rejected product " & 
-					productNames(Product) & 
-					" because there is no space. "
-				);
+				if not fromNotAccepted then
+					Put_Line(
+						"BUFFER: Rejected product " & 
+						productNames(Product) & 
+						" because there is no space. "
+					);
+				end if;
 				return False;
 			else
 				Free := storageCapacity - inStorage;
@@ -238,19 +241,17 @@ procedure Simulation2 is
 				lacks := lacks + maxLack(prod);
 			end loop;
 
-			if Free >= lacks then
-				return True;
-			end if;
-			
 			-- to prevent product being too many times in storage:
 			-- if product takes more or equal than storageCapacity/numOfProducts
 			-- then we do not add it
-			if storage(product) > storageCapacity / numOfProducts  then
-				Put_Line(
-					"BUFFER: Rejected product " & 
-					productNames(product) & 
-					" to prevent product being too many times in storage. "
-				);
+			if storage(product) >= (storageCapacity / numOfProducts) then
+				if not fromNotAccepted then
+					Put_Line(
+						"BUFFER: Rejected product " & 
+						productNames(product) & 
+						" to prevent product being too many times in storage. "
+					);
+				end if;
 				return False;
 			end if;
 
@@ -271,19 +272,21 @@ procedure Simulation2 is
 						return True;
 					end if;
 				end loop;
-
-				Put_Line(
-					"BUFFER: Rejected product " & 
-					productNames(product) & 
-					" to prevent buffer deadlock. "
-				);
+				
+				if not fromNotAccepted then 
+					Put_Line(
+						"BUFFER: Rejected product " & 
+						productNames(product) & 
+						" to prevent buffer deadlock. "
+					);
+				end if;
 				return False;
 			end if;
-			Put_Line(
-				"BUFFER: Rejected product " &
-				productNames(product)
-			);
-			return False;
+
+			if Free >= lacks then
+				return True;
+			end if;
+			return True;
 		end canTake;
 
 		procedure printStorageContent is
@@ -295,12 +298,6 @@ procedure Simulation2 is
 			end loop;
 			Put_Line("");
 		end printStorageContent;
-
-		procedure deleteProduct(product: in productRange) is
-		begin
-			storage(product) := storage(product) - 1;
-			inStorage := inStorage - 1;
-		end deleteProduct;
 
 	begin
 		Put_Line("Buffer: Buffor has started." & ASCII.LF);
@@ -322,39 +319,34 @@ procedure Simulation2 is
 						number := 0;
 					end if;
 				end Deliver;
-
+				
+				or  delay Duration(3.0);
+				Put_Line("BUFFER: No orders. Accepting products procedure...");
+					
 				accept Take(product: in productRange; number: in Integer; isTaken: out Boolean) do
 					--Put_Line("B [debug]: Przyjmiesz? " & Nazwa_productu(product) & " nr" & Integer'Image(Numer) & " na polke");
-					if canTake(product) then
+					if canTake(product, false) then
 						storage(product) := storage(product) + 1;
 						inStorage := inStorage + 1;
 						isTaken := True;
-						Put_Line("Buffer: Taken " & productNames(product) & ".");
+						Put_Line("BUFFER: Taken " & productNames(product) & ".");
 						notTakenCounter := 0;
 					else
-						isTaken := False;
-
-						notTakenCounter := notTakenCounter + 1;
-						if notTakenCounter >= 3 then
-							Put_Line("Buffer: product can not be taken if there is more than 3 of it in the storage at the moment. Removing the most common product.");
-
-							maxProduct := 0;
-							maxProductType := 1;
-							for prod in productRange
-							loop
-								if storage(prod) > storage(maxProductType) then
-									maxProduct := storage(prod);
-									maxProductType := prod;
-								end if;
-							end loop;
-							deleteProduct(maxProductType);
-							notTakenCounter := 0;
-							printStorageContent;
-						end if;
+						notAcceptedProducts(product) := notAcceptedProducts(product) + 1;
+						-- After product was refused we try to add other product from notAcceptedProduct
+						for prod in productRange loop
+							if prod = product then null;
+							elsif notAcceptedProducts(prod) = 0 then null;
+							elsif canTake(prod, true) then
+								storage(prod) := storage(prod) + 1;
+								notAcceptedProducts(prod) := notAcceptedProducts(prod) - 1;
+								inStorage := inStorage + 1;
+								Put_Line("BUFFER: Taken " & productNames(prod) & " from unaccepted products.");
+								exit;
+							end if;
+						end loop;
 					end if;
 				end Take;
-				or  delay Duration(3.0);				
-					Put_Line("Buffer: No orders. Accepting products procedure...");
 			end select;
 			printStorageContent;
 		end loop;
