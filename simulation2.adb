@@ -21,7 +21,7 @@ use Ada.Numerics;
 with Ada.Strings.Unbounded;
 use Ada.Strings.Unbounded;
 
-procedure Simulation is
+procedure Simulation2 is
 	numOfProducts: constant Integer := 5;
 	numOfSets: constant Integer := 3;
 	numOfCustomers: constant Integer := 2;
@@ -181,7 +181,7 @@ procedure Simulation is
 		maxProduct: Integer := 0;
 		maxProductType: productRange := 1;
 
-		function canBeTaken(product: productRange) return Boolean is
+		function canTake(product: productRange) return Boolean is
 			Free: Integer;
 			tmpStorage: storageType;
 			lack: array(setRange, productRange) of Integer;
@@ -200,17 +200,128 @@ procedure Simulation is
 					maxLack(prod) := 0;
 				end loop
 
-				for set in Zakres_Ciast
+				for aSet in setRange
 				loop
-					for W in Zakres_Wyrobow
+					for prod in productRange
 					loop
-						Brak(Z, W) := Integer'Max(0, Sklad_Zestawu(Z, W) - Tmp_Mag(W));
+						lack(aSet, prod) := Integer'Max(0, setComposition(aSet, prod) - tmpStorage(prod));
 
-						if Brak(Z, W) > Max_Brak(W) then
-							Max_Brak(w) := Brak(Z, W);
+						if lack(aSet, prod) > maxLack(prod) then
+							maxLack(prod) := lack(aSet, prod);
 						end if;
 					end loop;
 				end loop;
 			end if;
 
+			lacks := 0;
+
+			for prod in productRange
+			loop
+				lacks := lacks + maxLack(prod);
+			end loop;
+
+			return Free >= lacks;
+		end canTake;
+
+		function canDeliver(set: setRange) return Boolean is
+		begin
+			for prod in productRange loop
+				if storage(prod) < setComposition(set, prod) then
+					return False;
+				end if;
+			end loop;
+
+			return True;
+		end canDeliver;
+
+		procedure storageContent is
+			str: Unbounded_String;
+		begin
+			Append(str, "Buffer: storage content: ");
+			for prod in productRange loop
+				Append(str, Integer'Image(storage(prod)) & ", ");
+				if prod = numOfProducts then
+					Append(str, ASCII.LF); --WTF
+				end if;
+			end loop;
+
+			Put_Line(To_String(str));
+		end storageContent;
+
+		procedure deleteProduct(product: in productRange) is
+		begin
+			storage(product) := storage(product) - 1;
+			inStorage := inStorage - 1;
+		end deleteProduct;
+
+	begin
+		Put_Line("Buffer: Buffor has started." & ASCII.LF);
+		loop
+			Put_Line("Buffer: Waiting for order...");
+			select
+				accept Deliver(set: in setRange; number: out Integer) do
+					if canDeliver(set) then
+						Put_Line("Buffer: Delivered: " & setNames(set) & " nr " & Integer'Image(setID(set)));
+
+						for prod in productRange loop
+							storage(prod) := storage(prod) - setComposition(set, prod);
+							inStorage := inStorage - setComposition(set, prod);
+						end loop;
+
+						number := setID(set);
+						setID(set) := setID(set) + 1;
+					else
+						number := 0;
+					end if;
+				end Wydaj;
+
+			or delay Duration(3.0);
+				Put_Line("Buffer: No orders. Accepting products procedure...");
+				accept Take(product: in productRange; number: in Integer; isTaken: out Boolean) do
+					--Put_Line("B [debug]: Przyjmiesz? " & Nazwa_productu(product) & " nr" & Integer'Image(Numer) & " na polke");
+					if canTake(product) then
+						storage(product) := storage(product) + 1;
+						inStorage := inStorage + 1;
+						isTaken := True;
+						Put_Line("Buffer: Taken " & productNames(Wyrob) & ".");
+						notTakenCounter := 0;
+					else
+						isTaken := False;
+
+						notTakenCounter := notTakenCounter + 1;
+						if notTakenCounter >= 3 then
+							Put_Line("Buffer: product can not be taken if there is more than 3 of it in the storage at the moment. Removing the most common product.");
+
+							maxProduct := 0;
+							maxProductType := 1;
+							for prod in productRange
+							loop
+								if storage(prod) > storage(maxProductType) then
+									maxProduct := storage(prod);
+									maxProductType := prod;
+								end if;
+							end loop;
+							deleteProduct(maxProductType);
+							notTakenCounter := 0;
+							storageContent;
+						end if;
+					end if;
+				end Przyjmij;
+
+			end select;
+			storageContent;
+		end loop;
+	end bufferType;
+
+begin
+	for product in 1 .. numOfProducts
+	loop
+		producers(product).Start(product, 10);
+	end loop;
+
+	for customer in 1 .. numOfCustomers
+	loop
+		customers(customer).Start(customer, 12);
+	end loop;
+end Simulation2;
 
