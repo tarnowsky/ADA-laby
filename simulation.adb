@@ -96,15 +96,32 @@ procedure Simulation is
 	buffer: bufferType;
 
 	task body furiousWorker is
-		package randomFury is new Discrete_Random(furyLevelRange);
-		furyLevel: Integer := randomFury.Generator;
-		begin
-			accept Start do
-				if furyLevel > 8 then
-					buffor.QuarellInStorage;
-				end if;
-			end Start;
-	end furiousWorker;
+   package randomFury is new Discrete_Random(furyLevelRange);
+   furyLevel : Integer := randomFury.Generator;
+begin
+   loop
+      select
+         accept Start do
+            if furyLevel > 8 then
+               buffer.QuarellInStorage;
+            end if;
+         end Start;
+      else
+         -- Do nothing
+         null;
+      end select;
+   end loop;
+end furiousWorker;
+
+function throwingProducts(furyLevel : Integer; numOfProducts : Integer) return procedure is 
+begin
+   for product in 1 .. numOfProducts loop 
+      storage(product) := Float'Floor(storage(product) / 2.0);
+   end loop;
+   Put_Line("John's fury gains level " & Integer'Image(furyLevel));
+   Put_Line("After John's fury, we lost half of the products in storage");
+   return null;
+end throwingProducts;
 
 	task body producerType is
 		package randomProduction is new Discrete_Random(productionTimeRange);
@@ -315,6 +332,15 @@ procedure Simulation is
 			Put_Line("");
 		end printStorageContent;
 
+		function throwingProducts return Boolean is 
+		begin
+			for product in 1 .. numOfProducts loop 
+				storage(product) := Float'Floor(storage(product)/2.0);
+			end loop;
+			Put_Line("John's fury gains level " & furyLevel);
+			Put_Line("After John's fury, we lost half of the products in storage");
+		end throwingProducts;
+
 	begin
 		Put_Line("Buffer: Buffor has started." & ASCII.LF);
 		loop
@@ -337,17 +363,6 @@ procedure Simulation is
 				end Deliver;
 
 				accept QuarellInStorage do
-					function throwingProducts() return null is 
-						begin
-							for product in 1 .. numOfProducts
-								loop 
-									-- real
-									storage(product) := Float'Floor(storage(product)/2);
-								end loop;
-							Put_Line("John's fury gains level " & furyLevel);
-							Put_Line("After Jonh's fury, we lost half of the products in storage");
-						end throwingProducts;
-					
 					throwingProducts;
 				end QuarellInStorage;
 				
