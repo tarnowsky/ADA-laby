@@ -113,14 +113,16 @@ procedure Simulation is
     begin
         accept Start do
 			randomFury.Reset(furyLevelGen);
-			furyLevel := randomFury.Random(furyLevelGen);
-            Put_Line("Fury: "  & Integer'Image(furyLevel));
-            if furyLevel >= 8 then
 				loop
+				furyLevel := randomFury.Random(furyLevelGen);
+				Put_Line("Fury: "  & Integer'Image(furyLevel));
+            
+				if furyLevel >= 8 then
 					Throwing_Products;
-					delay Duration(10);
+				end if;
+				delay Duration(10);
+
 				end loop;
-            end if;
         end Start;
 
 
