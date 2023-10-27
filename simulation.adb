@@ -33,6 +33,7 @@ procedure Simulation is
 	subtype productRange is Integer range 1 .. numOfProducts;
 	subtype setRange is Integer range 1 .. numOfSets;
 	subtype customerRange is Integer range 1 .. numOfCustomers;
+	subtype furyLevelRange is Integer range 1 .. 10;
 
 	type storageType is array (productRange) of Integer;
 
@@ -70,6 +71,11 @@ procedure Simulation is
 	package randomConsumption is new Discrete_Random(consumptionTimeRange);
 	package randomSet is new Discrete_Random(setRange);
 
+	task type furiousWorker is 
+        entry Start;
+        entry Quarrel_In_Storage;
+    end furiousWorker;
+
 	task type producerType is
 		entry Start(
 			product: in productRange;
@@ -89,6 +95,36 @@ procedure Simulation is
 	producers: array(1 .. numOfProducts) of producerType;
 	customers: array(1 .. numOfCustomers) of customerType;
 	buffer: bufferType;
+
+	task body furiousWorker is
+        package randomFury is new Discrete_Random(furyLevelRange);
+		furyLevelGen: randomFury.Generator;
+		furyLevel: Integer := randomFury.Random(furyLevelGen);
+        procedure Throwing_Products is 
+        begin
+            for product in productRange loop
+                -- Reducing each product count by half
+                storage(product) := storage(product) / 2;
+            end loop;
+            Put_Line("John's fury gains level "  & Integer'Image(furyLevel));
+            Put_Line("After Jonh's fury, we lost half of the products in storage");
+        end Throwing_Products;
+
+    begin
+        accept Start do
+			randomFury.Reset(furyLevelGen);
+			furyLevel := randomFury.Random(furyLevelGen);
+            Put_Line("Fury: "  & Integer'Image(furyLevel));
+            if furyLevel >= 8 then
+				loop
+					Throwing_Products;
+					delay Duration(10);
+				end loop;
+            end if;
+        end Start;
+
+
+    end furiousWorker;
 
 	task body producerType is
 		package randomProduction is new Discrete_Random(productionTimeRange);
@@ -362,5 +398,10 @@ begin
 	loop
 		customers(customer).Start(customer, 12);
 	end loop;
+	declare
+        Furious_John: furiousWorker;
+    begin
+        Furious_John.Start; 
+    end; 
 end Simulation;
 
