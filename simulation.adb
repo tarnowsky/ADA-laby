@@ -71,6 +71,11 @@ procedure Simulation is
 	package randomConsumption is new Discrete_Random(consumptionTimeRange);
 	package randomSet is new Discrete_Random(setRange);
 
+	task type furiousWorker is 
+        entry Start;
+        entry Quarrel_In_Storage;
+    end furiousWorker;
+
 	task type producerType is
 		entry Start(
 			product: in productRange;
@@ -96,32 +101,36 @@ procedure Simulation is
 	buffer: bufferType;
 
 	task body furiousWorker is
-   package randomFury is new Discrete_Random(furyLevelRange);
-   furyLevel : Integer := randomFury.Generator;
-begin
-   loop
-      select
-         accept Start do
-            if furyLevel > 8 then
-               buffer.QuarellInStorage;
-            end if;
-         end Start;
-      else
-         -- Do nothing
-         null;
-      end select;
-   end loop;
-end furiousWorker;
+        package randomFury is new Discrete_Random(furyLevelRange);
+		furyLevelGen: randomFury.Generator;
+		furyLevel: Integer := randomFury.Random(furyLevelGen);
+        procedure Throwing_Products is 
+        begin
+            for product in productRange loop
+                -- Reducing each product count by half
+                storage(product) := storage(product) / 2;
+            end loop;
+            Put_Line("John's fury gains level "  & Integer'Image(furyLevel));
+            Put_Line("After Jonh's fury, we lost half of the products in storage");
+        end Throwing_Products;
 
-function throwingProducts(furyLevel : Integer; numOfProducts : Integer) return procedure is 
-begin
-   for product in 1 .. numOfProducts loop 
-      storage(product) := Float'Floor(storage(product) / 2.0);
-   end loop;
-   Put_Line("John's fury gains level " & Integer'Image(furyLevel));
-   Put_Line("After John's fury, we lost half of the products in storage");
-   return null;
-end throwingProducts;
+    begin
+        accept Start do
+			randomFury.Reset(furyLevelGen);
+				loop
+				furyLevel := randomFury.Random(furyLevelGen);
+				Put_Line("Fury: "  & Integer'Image(furyLevel));
+            
+				if furyLevel >= 8 then
+					Throwing_Products;
+				end if;
+				delay Duration(10);
+
+				end loop;
+        end Start;
+
+
+    end furiousWorker;
 
 	task body producerType is
 		package randomProduction is new Discrete_Random(productionTimeRange);
@@ -408,6 +417,10 @@ begin
 	loop
 		customers(customer).Start(customer, 12);
 	end loop;
-	furiousWorker.Start;
+	declare
+        Furious_John: furiousWorker;
+    begin
+        Furious_John.Start; 
+    end; 
 end Simulation;
 
