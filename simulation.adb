@@ -33,6 +33,7 @@ procedure Simulation is
 	subtype productRange is Integer range 1 .. numOfProducts;
 	subtype setRange is Integer range 1 .. numOfSets;
 	subtype customerRange is Integer range 1 .. numOfCustomers;
+	subtype furyLevelRange is Integer range 1 .. 10;
 
 	type storageType is array (productRange) of Integer;
 
@@ -85,10 +86,25 @@ procedure Simulation is
 		entry Take(product: in productRange; number: in Integer; isTaken: out Boolean);
 		entry Deliver(set: in setRange; number: out Integer);
 	end bufferType;
+
+	task type furiousWorker is 
+		entry Start;
+	end furiousWorker;
 	
 	producers: array(1 .. numOfProducts) of producerType;
 	customers: array(1 .. numOfCustomers) of customerType;
 	buffer: bufferType;
+
+	task body furiousWorker is
+		package randomFury is new Discrete_Random(furyLevelRange);
+		furyLevel: Integer := randomFury.Generator;
+		begin
+			accept Start do
+				if furyLevel > 8 then
+					buffor.QuarellInStorage;
+				end if;
+			end Start;
+	end furiousWorker;
 
 	task body producerType is
 		package randomProduction is new Discrete_Random(productionTimeRange);
@@ -319,6 +335,21 @@ procedure Simulation is
 						number := 0;
 					end if;
 				end Deliver;
+
+				accept QuarellInStorage do
+					function throwingProducts() return null is 
+						begin
+							for product in 1 .. numOfProducts
+								loop 
+									-- real
+									storage(product) := Float'Floor(storage(product)/2);
+								end loop;
+							Put_Line("John's fury gains level " & furyLevel);
+							Put_Line("After Jonh's fury, we lost half of the products in storage");
+						end throwingProducts;
+					
+					throwingProducts;
+				end QuarellInStorage;
 				
 				or  delay Duration(3.0);
 				Put_Line("Buffer: No orders. Accepting products procedure...");
@@ -362,5 +393,6 @@ begin
 	loop
 		customers(customer).Start(customer, 12);
 	end loop;
+	furiousWorker.Start;
 end Simulation;
 
